@@ -4,6 +4,7 @@ from var import *
 from os import remove
 import pygame
 
+
 def create_game(name):
     pygame.init()
     screen = pygame.display.set_mode((1366, 768))

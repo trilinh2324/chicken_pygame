@@ -3,6 +3,7 @@ from process import r_file, loop_playing, create_game, create_menu, close
 from var import menu_start, menu_load
 import os
 
+
 def main():
     screen = create_game('Chicken Invader')
     while True:
@@ -20,6 +21,7 @@ def main():
                 loop_playing(screen)
             elif select_start == 2:
                 close()
+
 
 if __name__ == "__main__":
     main()
