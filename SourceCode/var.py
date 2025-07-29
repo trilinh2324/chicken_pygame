@@ -8,7 +8,7 @@ def all_img():
         'hp': f'{dir_img}hp.png',
         'player': f'{dir_img}spaceship.png',
         'chicken': f'{dir_img}chicken.png',
-        'boss': [f'{dir_img}boss{i}.png' for i in range(1, 11)],  # 10 boss
+        'boss': [f'{dir_img}boss{i}.png' for i in range(1, 11)],  
         'laser': f'{dir_img}laser.png',
         'egg': f'{dir_img}egg.png',
         'explode': f'{dir_img}explode.png',

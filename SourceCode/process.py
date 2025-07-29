@@ -102,7 +102,6 @@ def create_chicken(level, number_ck, ck_inf):
         if (i + 1) % 15 == 0: x, y, direct = 100, y+100, not direct
         else: x += distance
 
-# --- BẮN HÌNH TAM GIÁC ---
 def create_laser(num_ray, ls_inf, pl_inf, sound):
     px, py = pl_inf['pos'][0]
     if num_ray == 1:
@@ -119,12 +118,12 @@ def create_laser(num_ray, ls_inf, pl_inf, sound):
         ls_inf['pos'].append((px - 10, py - 20))
         ls_inf['pos'].append((px + 50, py - 20))
         ls_inf['pos'].append((px + 70, py - 20))
-    elif num_ray == 5:  # hình tam giác
-        ls_inf['pos'].append((px + 20, py - 20))  # giữa
-        ls_inf['pos'].append((px, py - 20))       # trái gần
-        ls_inf['pos'].append((px + 40, py - 20))  # phải gần
-        ls_inf['pos'].append((px - 20, py - 20))  # trái xa
-        ls_inf['pos'].append((px + 60, py - 20))  # phải xa
+    elif num_ray == 5:  
+        ls_inf['pos'].append((px + 20, py - 20))  
+        ls_inf['pos'].append((px, py - 20))       
+        ls_inf['pos'].append((px + 40, py - 20))  
+        ls_inf['pos'].append((px - 20, py - 20))  
+        ls_inf['pos'].append((px + 60, py - 20))  
     sound.play()
 
 def create_egg(level, egg_inf, ck_inf, boss_inf_data):
@@ -177,15 +176,24 @@ def countdown_next_level(screen, lv):
     pygame.time.delay(800)
 
 def loop_playing(screen, load=None):
-    if load is None: load = [1, 1, 0, 5]
+    if load is None:
+        load = [1, 1, 0, 5]
     lv_game, lv_gun, score, hp = load
-    if lv_game > 1: w_file(lv_game, lv_gun, score, hp)
+    if lv_game > 1:
+        w_file(lv_game, lv_gun, score, hp)
 
-    game = game_level(); gun = gun_level()
-    pl_inf = player_inf(); ck_inf = chicken_inf(); boss_data = boss_inf(lv_game)
+    game = game_level()
+    gun = gun_level()
+    pl_inf = player_inf()
+    ck_inf = chicken_inf()
+    boss_data = boss_inf(lv_game)
     boss_data['hp'] += (lv_game - 1) * 5
 
-    ls_inf = laser_inf(); egg_inf = eg_inf(); item_data = item_inf(); score_inf = sc_inf()
+    ls_inf = laser_inf()
+    egg_inf = eg_inf()
+    item_data = item_inf()
+    score_inf = sc_inf()
+
     create_chicken(lv_game, game[lv_game][1], ck_inf)
     laser_sound = load_music(all_music()['shoot'], 0.05)
     boom_sound = load_music(all_music()['explode_ck'], 0.05)
@@ -230,47 +238,69 @@ def loop_playing(screen, load=None):
             if lv_game != 1: remove('../Data/save/save.txt')
             return
 
-        
-        if score >= gun[lv_gun][3] and lv_gun < 5:
-            lv_gun += 1
-            pygame.time.set_timer(ls_speed, gun[lv_gun][0])
-
-        out_screen(ls_inf, Max); out_screen(score_inf, Max)
-        out_screen(egg_inf, Max); out_screen(item_data, Max)
-        move_ck(ck_inf); move_boss(boss_data); move_eggs(egg_inf)
-        move(-gun[lv_gun][2], ls_inf); move(1, score_inf); move(1, item_data)
+        out_screen(ls_inf, Max)
+        out_screen(score_inf, Max)
+        out_screen(egg_inf, Max)
+        out_screen(item_data, Max)
+        move_ck(ck_inf)
+        move_boss(boss_data)
+        move_eggs(egg_inf)
+        move(-gun[lv_gun][2], ls_inf)
+        move(1, score_inf)
+        move(1, item_data)
 
         check = collision(ls_inf, ck_inf)
         if check:
-            boom_sound.play(); score += 1
-            if random.random() < 0.2: item_data['pos'].append(ck_inf['pos'][check[1]])
+            boom_sound.play()
+            score += 1
+            if random.random() < 0.2:
+                item_data['pos'].append(ck_inf['pos'][check[1]])
             score_inf['pos'].append(ck_inf['pos'][check[1]])
-            ls_inf['pos'].pop(check[0]); ck_inf['pos'].pop(check[1]); ck_inf['direct'].pop(check[1])
+            ls_inf['pos'].pop(check[0])
+            ck_inf['pos'].pop(check[1])
+            ck_inf['direct'].pop(check[1])
         else:
             check = collision(ls_inf, boss_data)
-            if check: boom_sound.play(); ls_inf['pos'].pop(check[0]); boss_data['hp'] -= 1
+            if check:
+                boom_sound.play()
+                ls_inf['pos'].pop(check[0])
+                boss_data['hp'] -= 1
+
 
         check = collision(egg_inf, pl_inf)
         if check:
-            collision_sound.play(); hp -= 1
-            egg_inf['pos'].pop(check[0]); egg_inf['direct'].pop(check[0])
-            lv_gun = 1 
-            pygame.time.set_timer(ls_speed, gun[lv_game][0])  
+            collision_sound.play()
+            hp -= 1
+            egg_inf['pos'].pop(check[0])
+            egg_inf['direct'].pop(check[0])
+            lv_gun = 1
+            pygame.time.set_timer(ls_speed, gun[lv_gun][0])
+            ls_inf['pos'].clear()
+
 
         check = collision(item_data, pl_inf)
         if check:
-            if lv_gun < 5: lv_gun += 1
+            if lv_gun < 5:
+                lv_gun += 1
             pygame.time.set_timer(ls_speed, gun[lv_gun][0])
             item_data['pos'].pop(check[0])
+
+
         check = collision(score_inf, pl_inf)
-        if check: score_inf['pos'].pop(check[0]); score += 1
+        if check:
+            score_inf['pos'].pop(check[0])
+            score += 1
 
         key = pygame.key.get_pressed()
         pos_x, pos_y = pl_inf['pos'][0]
-        if (key[pygame.K_LEFT] or key[pygame.K_a]) and pos_x - pl_inf['move'] > 0: pl_inf['pos'][0] = change_pos(pl_inf['pos'][0], (-pl_inf['move'], 0))
-        elif (key[pygame.K_RIGHT] or key[pygame.K_d]) and pos_x + pl_inf['move'] + pl_inf['rect'].width <= Max[0]: pl_inf['pos'][0] = change_pos(pl_inf['pos'][0], (pl_inf['move'], 0))
-        elif (key[pygame.K_UP] or key[pygame.K_w]) and pos_y - pl_inf['move'] > Max[1] // 2: pl_inf['pos'][0] = change_pos(pl_inf['pos'][0], (0, -pl_inf['move']))
-        elif (key[pygame.K_DOWN] or key[pygame.K_s]) and pos_y + pl_inf['move'] + pl_inf['rect'].height <= Max[1]: pl_inf['pos'][0] = change_pos(pl_inf['pos'][0], (0, pl_inf['move']))
+        if (key[pygame.K_LEFT] or key[pygame.K_a]) and pos_x - pl_inf['move'] > 0:
+            pl_inf['pos'][0] = change_pos(pl_inf['pos'][0], (-pl_inf['move'], 0))
+        elif (key[pygame.K_RIGHT] or key[pygame.K_d]) and pos_x + pl_inf['move'] + pl_inf['rect'].width <= Max[0]:
+            pl_inf['pos'][0] = change_pos(pl_inf['pos'][0], (pl_inf['move'], 0))
+        elif (key[pygame.K_UP] or key[pygame.K_w]) and pos_y - pl_inf['move'] > Max[1] // 2:
+            pl_inf['pos'][0] = change_pos(pl_inf['pos'][0], (0, -pl_inf['move']))
+        elif (key[pygame.K_DOWN] or key[pygame.K_s]) and pos_y + pl_inf['move'] + pl_inf['rect'].height <= Max[1]:
+            pl_inf['pos'][0] = change_pos(pl_inf['pos'][0], (0, pl_inf['move']))
         elif key[pygame.K_ESCAPE]:
             choose = create_menu(screen, [
                 text("TẠM DỪNG", 80, "Red"),
